@@ -1,0 +1,15 @@
+### 借款申请单创建
+POST http://localhost:8081/api/v1/borrow/apply/create
+accept: application/json
+content-type: application/json
+
+{
+  "userId": "zhangsan",
+  "bookCount": 20,
+  "applyDays": 12
+}
+
+
+### 审批
+GET http://localhost:8081/api/v1/borrow/apply/approve/2cee1354-1dc8-11f0-aa76-c4c6e6281752
+
