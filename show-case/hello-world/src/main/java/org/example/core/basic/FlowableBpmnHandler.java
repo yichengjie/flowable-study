@@ -1,4 +1,4 @@
-package org.example.core;
+package org.example.core.basic;
 
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +62,14 @@ public class FlowableBpmnHandler {
      */
     public static ExclusiveGateway createExclusiveGateway(Integer i) {
         ExclusiveGateway gateway = new ExclusiveGateway();
+        gateway.setName("getaway_name_" + i);
+        gateway.setId("getaway_id_" + i);
+        return gateway;
+    }
+
+
+    public static ParallelGateway createParallelGateway(Integer i) {
+        ParallelGateway gateway = new ParallelGateway();
         gateway.setName("getaway_name_" + i);
         gateway.setId("getaway_id_" + i);
         return gateway;

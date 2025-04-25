@@ -1,12 +1,10 @@
-package org.example.core;
+package org.example.core.basic;
 
 import cn.hutool.core.collection.CollUtil;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.*;
-import org.flowable.engine.RepositoryService;
-import org.flowable.engine.repository.Deployment;
 import org.springframework.stereotype.Component;
 import org.flowable.bpmn.model.Process;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DynamicProcessDefinition {
 
-    private final RepositoryService repositoryService;
+    //private final RepositoryService repositoryService;
 
 
     public String createProcessDefinition(ProcessEntity processEntity) {
@@ -45,17 +43,17 @@ public class DynamicProcessDefinition {
         //构建流程模板
         buildProcessTemplate(process, startEvent, endEvent, userTaskList);
         //该流程的流程xml字符串
-        //BpmnXMLConverter bpmnXMLConverter = new BpmnXMLConverter();
-        //byte[] convertToXML = bpmnXMLConverter.convertToXML(bpmnModel);
-        //String bytes = new String(convertToXML);
+        BpmnXMLConverter bpmnXMLConverter = new BpmnXMLConverter();
+        byte[] convertToXML = bpmnXMLConverter.convertToXML(bpmnModel);
+        return new String(convertToXML);
         //log.info("该流程的流程xml为：{}", bytes);
         // 创建一个新的部署
-        Deployment deploy = repositoryService.createDeployment().key(TypeEnum.getProcessKey(processEntity.getType()))
-                .name(TypeEnum.getProcessKey(processEntity.getType()))
-                .addBpmnModel(TypeEnum.getProcessKey(processEntity.getType()) + ".bpmn", bpmnModel)
-                .deploy();
-        log.info("部署id:{}", deploy.getId());
-        return deploy.getId();
+//        Deployment deploy = repositoryService.createDeployment().key(TypeEnum.getProcessKey(processEntity.getType()))
+//                .name(TypeEnum.getProcessKey(processEntity.getType()))
+//                .addBpmnModel(TypeEnum.getProcessKey(processEntity.getType()) + ".bpmn", bpmnModel)
+//                .deploy();
+//        log.info("部署id:{}", deploy.getId());
+//        return deploy.getId();
     }
 
     /**

@@ -1,9 +1,12 @@
-package org.example.core;
+package org.example.core.basic;
 
+import lombok.Getter;
+
+@Getter
 public enum TypeEnum {
 
-    HELLO_WORLD("HELLO_WORLD") ;
-    private String type;
+    HELLO_WORLD_DYNAMIC("HELLO_WORLD_DYNAMIC") ;
+    private final String type;
     TypeEnum(String type) {
         this.type = type;
     }

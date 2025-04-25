@@ -1,4 +1,4 @@
-package org.example.core;
+package org.example.core.basic;
 
 import lombok.Data;
 
@@ -10,4 +10,8 @@ public class ProcessNode {
     private String nodeName;
 
     private int nodeLevel;
+
+    public ProcessNode(String nodeName){
+        this.nodeName = nodeName;
+    }
 }

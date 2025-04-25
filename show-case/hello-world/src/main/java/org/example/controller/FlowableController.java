@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.core.DynamicProcessDefinition;
-import org.example.core.ProcessEntity;
+import org.example.core.basic.DynamicProcessDefinition;
+import org.example.core.basic.ProcessEntity;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +58,7 @@ public class FlowableController {
 
 
     @Data
-    static class AuditData {
+    public static class AuditData {
         @NotBlank(message = "业务key不能为空")
         private String businessKey;
         @NotBlank(message = "流程类型不能为空")

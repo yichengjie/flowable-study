@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/test">
+    <process id="process_HELLO_WORLD_DYNAMIC" name="process_HELLO_WORLD_DYNAMIC" isExecutable="true">
+        <startEvent id="start" name="开始"></startEvent>
+        <endEvent id="end" name="结束"></endEvent>
+        <userTask id="process_HELLO_WORLD_DYNAMIC_task_4c36b0fb4e9445b49cb1f120a1e39294" name="普通任务1" flowable:category="1">
+            <documentation>false</documentation>
+        </userTask>
+        <exclusiveGateway id="getaway_id_0" name="getaway_name_0"></exclusiveGateway>
+        <sequenceFlow sourceRef="start" targetRef="process_HELLO_WORLD_DYNAMIC_task_4c36b0fb4e9445b49cb1f120a1e39294"></sequenceFlow>
+        <sequenceFlow name="普通任务1_开始审批" sourceRef="process_HELLO_WORLD_DYNAMIC_task_4c36b0fb4e9445b49cb1f120a1e39294" targetRef="getaway_id_0"></sequenceFlow>
+        <sequenceFlow name="同意" sourceRef="getaway_id_0" targetRef="process_HELLO_WORLD_DYNAMIC_task_fee3e5821bf446e6ae8319f243bfe8c2">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow name="拒绝" sourceRef="getaway_id_0" targetRef="process_HELLO_WORLD_DYNAMIC_task_4c36b0fb4e9445b49cb1f120a1e39294">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <userTask id="process_HELLO_WORLD_DYNAMIC_task_fee3e5821bf446e6ae8319f243bfe8c2" name="普通任务2" flowable:category="2">
+            <documentation>false</documentation>
+        </userTask>
+        <exclusiveGateway id="getaway_id_1" name="getaway_name_1"></exclusiveGateway>
+        <sequenceFlow name="普通任务2_开始审批" sourceRef="process_HELLO_WORLD_DYNAMIC_task_fee3e5821bf446e6ae8319f243bfe8c2" targetRef="getaway_id_1"></sequenceFlow>
+        <sequenceFlow name="同意" sourceRef="getaway_id_1" targetRef="process_HELLO_WORLD_DYNAMIC_task_12ad6616ef4e4a729883421dda0c684c">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow name="拒绝" sourceRef="getaway_id_1" targetRef="process_HELLO_WORLD_DYNAMIC_task_4c36b0fb4e9445b49cb1f120a1e39294">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <userTask id="process_HELLO_WORLD_DYNAMIC_task_12ad6616ef4e4a729883421dda0c684c" name="普通任务3" flowable:category="3">
+            <documentation>false</documentation>
+        </userTask>
+        <exclusiveGateway id="getaway_id_2" name="getaway_name_2"></exclusiveGateway>
+        <sequenceFlow name="普通任务3_开始审批" sourceRef="process_HELLO_WORLD_DYNAMIC_task_12ad6616ef4e4a729883421dda0c684c" targetRef="getaway_id_2"></sequenceFlow>
+        <sequenceFlow name="同意" sourceRef="getaway_id_2" targetRef="process_HELLO_WORLD_DYNAMIC_task_74927b6ce39e48bab071fc56fe7f2de2">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow name="拒绝" sourceRef="getaway_id_2" targetRef="process_HELLO_WORLD_DYNAMIC_task_fee3e5821bf446e6ae8319f243bfe8c2">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <userTask id="process_HELLO_WORLD_DYNAMIC_task_74927b6ce39e48bab071fc56fe7f2de2" name="普通任务4" flowable:category="4">
+            <documentation>false</documentation>
+        </userTask>
+        <exclusiveGateway id="getaway_id_3" name="getaway_name_3"></exclusiveGateway>
+        <sequenceFlow name="普通任务4_开始审批" sourceRef="process_HELLO_WORLD_DYNAMIC_task_74927b6ce39e48bab071fc56fe7f2de2" targetRef="getaway_id_3"></sequenceFlow>
+        <sequenceFlow name="同意" sourceRef="getaway_id_3" targetRef="process_HELLO_WORLD_DYNAMIC_task_3e5d3e49a4784219bc7d3ff9a6a32a86">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow name="拒绝" sourceRef="getaway_id_3" targetRef="process_HELLO_WORLD_DYNAMIC_task_12ad6616ef4e4a729883421dda0c684c">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <userTask id="process_HELLO_WORLD_DYNAMIC_task_3e5d3e49a4784219bc7d3ff9a6a32a86" name="普通任务5" flowable:category="5">
+            <documentation>false</documentation>
+        </userTask>
+        <exclusiveGateway id="getaway_id_4" name="getaway_name_4"></exclusiveGateway>
+        <sequenceFlow name="普通任务5_开始审批" sourceRef="process_HELLO_WORLD_DYNAMIC_task_3e5d3e49a4784219bc7d3ff9a6a32a86" targetRef="getaway_id_4"></sequenceFlow>
+        <sequenceFlow name="同意" sourceRef="getaway_id_4" targetRef="process_HELLO_WORLD_DYNAMIC_task_7cadbca289f74e65b9d4abe0c334777d">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow name="拒绝" sourceRef="getaway_id_4" targetRef="process_HELLO_WORLD_DYNAMIC_task_74927b6ce39e48bab071fc56fe7f2de2">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <userTask id="process_HELLO_WORLD_DYNAMIC_task_7cadbca289f74e65b9d4abe0c334777d" name="普通任务6" flowable:category="6">
+            <documentation>true</documentation>
+        </userTask>
+        <exclusiveGateway id="getaway_id_5" name="getaway_name_5"></exclusiveGateway>
+        <sequenceFlow name="普通任务6_开始审批" sourceRef="process_HELLO_WORLD_DYNAMIC_task_7cadbca289f74e65b9d4abe0c334777d" targetRef="getaway_id_5"></sequenceFlow>
+        <sequenceFlow name="同意" sourceRef="getaway_id_5" targetRef="end">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditResult}]]></conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow name="拒绝" sourceRef="getaway_id_5" targetRef="process_HELLO_WORLD_DYNAMIC_task_3e5d3e49a4784219bc7d3ff9a6a32a86">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!auditResult}]]></conditionExpression>
+        </sequenceFlow>
+    </process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_process_HELLO_WORLD_DYNAMIC">
+        <bpmndi:BPMNPlane bpmnElement="process_HELLO_WORLD_DYNAMIC" id="BPMNPlane_process_HELLO_WORLD_DYNAMIC"></bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</definitions>

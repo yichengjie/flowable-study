@@ -11,7 +11,10 @@ flowable:
   database-schema-update: true
   # 异步执行耗时操作，提升性能
   async-executor-activate: false
-
+# mybatis plus config
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
 # remote service url config
 remote:
   library:
