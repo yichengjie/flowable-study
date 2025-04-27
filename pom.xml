@@ -11,12 +11,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.12</version>
+        <version>2.6.15</version>
         <relativePath/>
     </parent>
     <modules>
         <module>show-case</module>
         <module>library-service</module>
+        <module>modules</module>
     </modules>
 
     <properties>
@@ -31,21 +32,21 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2023.0.5</version>
+                <version>2021.0.9</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
 
-            <dependency>
+            <!--<dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-spring-boot-starter</artifactId>
                 <version>7.1.0</version>
-            </dependency>
+            </dependency>-->
 
             <dependency>
                 <groupId>org.flowable</groupId>
-                <artifactId>flowable-engine</artifactId>
-                <version>7.1.0</version>
+                <artifactId>flowable-spring-boot-starter</artifactId>
+                <version>6.8.1</version>
             </dependency>
 
             <dependency>
@@ -62,7 +63,7 @@
 
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>3.5.11</version>
             </dependency>
 

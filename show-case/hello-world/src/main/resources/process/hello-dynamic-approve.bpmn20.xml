@@ -1,54 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/test">
-    <process id="region_approve_cd1be4416fa441dfab0987a6cb26e602" name="region_approve_cd1be4416fa441dfab0987a6cb26e602" isExecutable="true">
+    <process id="dynamic_region_approve" name="dynamic_region_approve" isExecutable="true">
         <startEvent id="start" name="开始"></startEvent>
-        <sequenceFlow sourceRef="start" targetRef="c71c9f31575e4bceb89bf97b5c98243d"></sequenceFlow>
-        <serviceTask id="c71c9f31575e4bceb89bf97b5c98243d" name="预处理服务" flowable:class="org.example.task.PrepareDataServiceTask"></serviceTask>
-        <sequenceFlow sourceRef="c71c9f31575e4bceb89bf97b5c98243d" targetRef="getaway_id_1"></sequenceFlow>
+        <sequenceFlow sourceRef="start" targetRef="prepare_58091a3d196d409c91d3874ac3ad46c2"></sequenceFlow>
+        <serviceTask id="prepare_58091a3d196d409c91d3874ac3ad46c2" name="预处理服务" flowable:class="org.example.task.PrepareDataServiceTask"></serviceTask>
+        <sequenceFlow sourceRef="prepare_58091a3d196d409c91d3874ac3ad46c2" targetRef="getaway_id_1"></sequenceFlow>
         <parallelGateway id="getaway_id_1" name="getaway_name_1"></parallelGateway>
         <sequenceFlow sourceRef="getaway_id_1" targetRef="region_service_task_id_hua_nan"></sequenceFlow>
-        <serviceTask id="region_service_task_id_hua_nan" name="hua_nan" flowable:class="org.example.task.RegionServiceTask"></serviceTask>
+        <serviceTask id="region_service_task_id_hua_nan" name="hua_nan" flowable:class="org.example.task.RegionServiceTask">
+            <extensionElements>
+                <flowable:field name="regionCodeField">
+                    <flowable:string><![CDATA[hua_nan]]></flowable:string>
+                </flowable:field>
+            </extensionElements>
+        </serviceTask>
         <sequenceFlow sourceRef="region_service_task_id_hua_nan" targetRef="region_user_task_first_reviewer_id_hua_nan"></sequenceFlow>
-        <userTask id="region_user_task_first_reviewer_id_hua_nan" name="审核人" flowable:assignee="${first_reviewer_hua_nan}"></userTask>
+        <userTask id="region_user_task_first_reviewer_id_hua_nan" name="审核人">
+            <extensionElements>
+                <flowable:taskListener event="create" class="org.example.listener.RegionAssignTaskListener">
+                    <flowable:field name="urlField">
+                        <flowable:string><![CDATA[http://localhost:9090/api/v1/hello-world/query-region-assign]]></flowable:string>
+                    </flowable:field>
+                    <flowable:field name="parametersField">
+                        <flowable:string><![CDATA[regionCode=hua_nan&approveLevel=first_reviewer]]></flowable:string>
+                    </flowable:field>
+                </flowable:taskListener>
+            </extensionElements>
+        </userTask>
         <sequenceFlow sourceRef="region_user_task_first_reviewer_id_hua_nan" targetRef="region_user_task_secondary_reviewer_id_hua_nan"></sequenceFlow>
-        <userTask id="region_user_task_secondary_reviewer_id_hua_nan" name="二级审核人" flowable:assignee="${secondary_reviewer_hua_nan}"></userTask>
+        <userTask id="region_user_task_secondary_reviewer_id_hua_nan" name="二级审核人">
+            <extensionElements>
+                <flowable:taskListener event="create" class="org.example.listener.RegionAssignTaskListener">
+                    <flowable:field name="urlField">
+                        <flowable:string><![CDATA[http://localhost:9090/api/v1/hello-world/query-region-assign]]></flowable:string>
+                    </flowable:field>
+                    <flowable:field name="parametersField">
+                        <flowable:string><![CDATA[regionCode=hua_nan&approveLevel=secondary_reviewer]]></flowable:string>
+                    </flowable:field>
+                </flowable:taskListener>
+            </extensionElements>
+        </userTask>
         <sequenceFlow sourceRef="region_user_task_secondary_reviewer_id_hua_nan" targetRef="region_user_task_coe_reviewer_id_hua_nan"></sequenceFlow>
-        <userTask id="region_user_task_coe_reviewer_id_hua_nan" name="COE总部" flowable:assignee="${coe_reviewer_hua_nan}"></userTask>
+        <userTask id="region_user_task_coe_reviewer_id_hua_nan" name="COE总部">
+            <extensionElements>
+                <flowable:taskListener event="create" class="org.example.listener.RegionAssignTaskListener">
+                    <flowable:field name="urlField">
+                        <flowable:string><![CDATA[http://localhost:9090/api/v1/hello-world/query-region-assign]]></flowable:string>
+                    </flowable:field>
+                    <flowable:field name="parametersField">
+                        <flowable:string><![CDATA[regionCode=hua_nan&approveLevel=coe_reviewer]]></flowable:string>
+                    </flowable:field>
+                </flowable:taskListener>
+            </extensionElements>
+        </userTask>
         <sequenceFlow sourceRef="region_user_task_coe_reviewer_id_hua_nan" targetRef="getaway_id_2"></sequenceFlow>
-        <sequenceFlow sourceRef="getaway_id_1" targetRef="region_service_task_id_xi_nan"></sequenceFlow>
-        <serviceTask id="region_service_task_id_xi_nan" name="xi_nan" flowable:class="org.example.task.RegionServiceTask"></serviceTask>
-        <sequenceFlow sourceRef="region_service_task_id_xi_nan" targetRef="region_user_task_first_reviewer_id_xi_nan"></sequenceFlow>
-        <userTask id="region_user_task_first_reviewer_id_xi_nan" name="审核人" flowable:assignee="${first_reviewer_xi_nan}"></userTask>
-        <sequenceFlow sourceRef="region_user_task_first_reviewer_id_xi_nan" targetRef="region_user_task_secondary_reviewer_id_xi_nan"></sequenceFlow>
-        <userTask id="region_user_task_secondary_reviewer_id_xi_nan" name="二级审核人" flowable:assignee="${secondary_reviewer_xi_nan}"></userTask>
-        <sequenceFlow sourceRef="region_user_task_secondary_reviewer_id_xi_nan" targetRef="region_user_task_coe_reviewer_id_xi_nan"></sequenceFlow>
-        <userTask id="region_user_task_coe_reviewer_id_xi_nan" name="COE总部" flowable:assignee="${coe_reviewer_xi_nan}"></userTask>
-        <sequenceFlow sourceRef="region_user_task_coe_reviewer_id_xi_nan" targetRef="getaway_id_2"></sequenceFlow>
         <sequenceFlow sourceRef="getaway_id_1" targetRef="region_service_task_id_hua_bei"></sequenceFlow>
-        <serviceTask id="region_service_task_id_hua_bei" name="hua_bei" flowable:class="org.example.task.RegionServiceTask"></serviceTask>
+        <serviceTask id="region_service_task_id_hua_bei" name="hua_bei" flowable:class="org.example.task.RegionServiceTask">
+            <extensionElements>
+                <flowable:field name="regionCodeField">
+                    <flowable:string><![CDATA[hua_bei]]></flowable:string>
+                </flowable:field>
+            </extensionElements>
+        </serviceTask>
         <sequenceFlow sourceRef="region_service_task_id_hua_bei" targetRef="region_user_task_first_reviewer_id_hua_bei"></sequenceFlow>
-        <userTask id="region_user_task_first_reviewer_id_hua_bei" name="审核人" flowable:assignee="${first_reviewer_hua_bei}"></userTask>
+        <userTask id="region_user_task_first_reviewer_id_hua_bei" name="审核人">
+            <extensionElements>
+                <flowable:taskListener event="create" class="org.example.listener.RegionAssignTaskListener">
+                    <flowable:field name="urlField">
+                        <flowable:string><![CDATA[http://localhost:9090/api/v1/hello-world/query-region-assign]]></flowable:string>
+                    </flowable:field>
+                    <flowable:field name="parametersField">
+                        <flowable:string><![CDATA[regionCode=hua_bei&approveLevel=first_reviewer]]></flowable:string>
+                    </flowable:field>
+                </flowable:taskListener>
+            </extensionElements>
+        </userTask>
         <sequenceFlow sourceRef="region_user_task_first_reviewer_id_hua_bei" targetRef="region_user_task_secondary_reviewer_id_hua_bei"></sequenceFlow>
-        <userTask id="region_user_task_secondary_reviewer_id_hua_bei" name="二级审核人" flowable:assignee="${secondary_reviewer_hua_bei}"></userTask>
+        <userTask id="region_user_task_secondary_reviewer_id_hua_bei" name="二级审核人">
+            <extensionElements>
+                <flowable:taskListener event="create" class="org.example.listener.RegionAssignTaskListener">
+                    <flowable:field name="urlField">
+                        <flowable:string><![CDATA[http://localhost:9090/api/v1/hello-world/query-region-assign]]></flowable:string>
+                    </flowable:field>
+                    <flowable:field name="parametersField">
+                        <flowable:string><![CDATA[regionCode=hua_bei&approveLevel=secondary_reviewer]]></flowable:string>
+                    </flowable:field>
+                </flowable:taskListener>
+            </extensionElements>
+        </userTask>
         <sequenceFlow sourceRef="region_user_task_secondary_reviewer_id_hua_bei" targetRef="region_user_task_coe_reviewer_id_hua_bei"></sequenceFlow>
-        <userTask id="region_user_task_coe_reviewer_id_hua_bei" name="COE总部" flowable:assignee="${coe_reviewer_hua_bei}"></userTask>
+        <userTask id="region_user_task_coe_reviewer_id_hua_bei" name="COE总部">
+            <extensionElements>
+                <flowable:taskListener event="create" class="org.example.listener.RegionAssignTaskListener">
+                    <flowable:field name="urlField">
+                        <flowable:string><![CDATA[http://localhost:9090/api/v1/hello-world/query-region-assign]]></flowable:string>
+                    </flowable:field>
+                    <flowable:field name="parametersField">
+                        <flowable:string><![CDATA[regionCode=hua_bei&approveLevel=coe_reviewer]]></flowable:string>
+                    </flowable:field>
+                </flowable:taskListener>
+            </extensionElements>
+        </userTask>
         <sequenceFlow sourceRef="region_user_task_coe_reviewer_id_hua_bei" targetRef="getaway_id_2"></sequenceFlow>
-        <sequenceFlow sourceRef="getaway_id_1" targetRef="region_service_task_id_dong_bei"></sequenceFlow>
-        <serviceTask id="region_service_task_id_dong_bei" name="dong_bei" flowable:class="org.example.task.RegionServiceTask"></serviceTask>
-        <sequenceFlow sourceRef="region_service_task_id_dong_bei" targetRef="region_user_task_first_reviewer_id_dong_bei"></sequenceFlow>
-        <userTask id="region_user_task_first_reviewer_id_dong_bei" name="审核人" flowable:assignee="${first_reviewer_dong_bei}"></userTask>
-        <sequenceFlow sourceRef="region_user_task_first_reviewer_id_dong_bei" targetRef="region_user_task_secondary_reviewer_id_dong_bei"></sequenceFlow>
-        <userTask id="region_user_task_secondary_reviewer_id_dong_bei" name="二级审核人" flowable:assignee="${secondary_reviewer_dong_bei}"></userTask>
-        <sequenceFlow sourceRef="region_user_task_secondary_reviewer_id_dong_bei" targetRef="region_user_task_coe_reviewer_id_dong_bei"></sequenceFlow>
-        <userTask id="region_user_task_coe_reviewer_id_dong_bei" name="COE总部" flowable:assignee="${coe_reviewer_dong_bei}"></userTask>
-        <sequenceFlow sourceRef="region_user_task_coe_reviewer_id_dong_bei" targetRef="getaway_id_2"></sequenceFlow>
         <parallelGateway id="getaway_id_2" name="getaway_name_2"></parallelGateway>
         <sequenceFlow sourceRef="getaway_id_2" targetRef="data_update_service_task_id"></sequenceFlow>
-        <serviceTask id="data_update_service_task_id" name="数据更新API" flowable:class="org.example.task.DataUpdateServiceTask"></serviceTask>
+        <serviceTask id="data_update_service_task_id" name="数据更新API" flowable:class="org.example.task.DataUpdateServiceTask">
+            <extensionElements>
+                <flowable:field name="urlField">
+                    <flowable:string><![CDATA[http://localhost:9090/api/v1/hello-world/update-data]]></flowable:string>
+                </flowable:field>
+                <flowable:field name="parametersField">
+                    <flowable:string><![CDATA[status=COMPLETE]]></flowable:string>
+                </flowable:field>
+                <flowable:field name="expressionField">
+                    <flowable:string><![CDATA[auditResult]]></flowable:string>
+                </flowable:field>
+            </extensionElements>
+        </serviceTask>
         <sequenceFlow sourceRef="data_update_service_task_id" targetRef="end"></sequenceFlow>
         <endEvent id="end" name="结束"></endEvent>
     </process>
-    <bpmndi:BPMNDiagram id="BPMNDiagram_region_approve_cd1be4416fa441dfab0987a6cb26e602">
-        <bpmndi:BPMNPlane bpmnElement="region_approve_cd1be4416fa441dfab0987a6cb26e602" id="BPMNPlane_region_approve_cd1be4416fa441dfab0987a6cb26e602"></bpmndi:BPMNPlane>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_dynamic_region_approve">
+        <bpmndi:BPMNPlane bpmnElement="dynamic_region_approve" id="BPMNPlane_dynamic_region_approve"></bpmndi:BPMNPlane>
     </bpmndi:BPMNDiagram>
 </definitions>

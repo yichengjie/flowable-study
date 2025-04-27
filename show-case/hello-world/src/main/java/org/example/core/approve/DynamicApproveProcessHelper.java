@@ -1,14 +1,14 @@
 package org.example.core.approve;
 
 import org.example.core.basic.FlowableBpmnHandler;
+import org.example.enums.DynamicApproveLevel;
 import org.example.enums.DynamicProcessType;
+import org.example.enums.ProcessVariables;
 import org.example.utils.CommonUtil;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.*;
 import org.flowable.bpmn.model.Process;
 import org.springframework.util.CollectionUtils;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +22,7 @@ public class DynamicApproveProcessHelper {
         Process process = new Process();
         bpmnModel.addProcess(process);
         // 流程标识
-        String processKey = type.getCode() + "_" +CommonUtil.uuid() ;
+        String processKey = type.getCode() ;
         process.setId(processKey);
         process.setName(processKey);
         //开始事件
@@ -31,9 +31,10 @@ public class DynamicApproveProcessHelper {
 
         //Prepare data service
         ServiceTask prepareDataService = new ServiceTask();
-        prepareDataService.setId(CommonUtil.uuid());
+        prepareDataService.setId("prepare_" + CommonUtil.uuid());
         prepareDataService.setName("预处理服务");
-        prepareDataService.setType("org.example.task.PrepareDataServiceTask");
+        prepareDataService.setImplementationType("class");
+        prepareDataService.setImplementation("org.example.task.PrepareDataServiceTask");
 
         // 开始事件 ===> 预处理服务 sequenceFlow
         SequenceFlow startSequenceFlow = new SequenceFlow(startEvent.getId(), prepareDataService.getId());
@@ -61,29 +62,32 @@ public class DynamicApproveProcessHelper {
             ServiceTask regionServiceTask = new ServiceTask();
             regionServiceTask.setId("region_service_task_id_" + regionCode);
             regionServiceTask.setName(regionCode);
-            // "flowable:class", regionCode
-            CustomProperty customProperty = new CustomProperty();
-            customProperty.setName("flowable:class");
-            customProperty.setSimpleValue("org.example.task.RegionServiceTask");
-            regionServiceTask.setCustomProperties(List.of(customProperty));
+            regionServiceTask.setImplementationType("class");
+            regionServiceTask.setImplementation("org.example.task.RegionServiceTask");
+            FieldExtension regionCodeField = new FieldExtension();
+            regionCodeField.setFieldName("regionCodeField");
+            regionCodeField.setStringValue(regionCode);
+            regionServiceTask.setFieldExtensions(
+                List.of(regionCodeField)
+            );
             // 审核人
             UserTask firstUserTask = new UserTask();
             firstUserTask.setId("region_user_task_first_reviewer_id_" + regionCode);
             firstUserTask.setName("审核人");
             // task assignee
-            firstUserTask.setAssignee("${first_reviewer_" + regionCode + "}");
+            bindRegionAssignListener(firstUserTask, regionCode, DynamicApproveLevel.FIRST_REVIEWER);
 
             // 二级审核人
             UserTask secondaryUserTask = new UserTask();
             secondaryUserTask.setId("region_user_task_secondary_reviewer_id_" + regionCode);
             secondaryUserTask.setName("二级审核人");
-            secondaryUserTask.setAssignee("${secondary_reviewer_" + regionCode + "}");
+            bindRegionAssignListener(secondaryUserTask, regionCode, DynamicApproveLevel.SECONDARY_REVIEWER);
 
             // COE总部审核人
             UserTask coeUserTask = new UserTask();
             coeUserTask.setId("region_user_task_coe_reviewer_id_" + regionCode);
             coeUserTask.setName("COE总部");
-            coeUserTask.setAssignee("${coe_reviewer_" + regionCode + "}");
+            bindRegionAssignListener(coeUserTask, regionCode, DynamicApproveLevel.COE_REVIEWER);
 
             // start网关 ====> 大区服务 sequenceFlow
             SequenceFlow startGatewaySequence = new SequenceFlow(startParallelGatewayId, regionServiceTask.getId());
@@ -115,7 +119,11 @@ public class DynamicApproveProcessHelper {
         ServiceTask dataUpdateTask = new ServiceTask();
         dataUpdateTask.setId("data_update_service_task_id");
         dataUpdateTask.setName("数据更新API");
-        dataUpdateTask.setExtensionId("org.example.task.DataUpdateServiceTask");
+        dataUpdateTask.setImplementationType("class");
+        dataUpdateTask.setImplementation("org.example.task.DataUpdateServiceTask");
+        // 设置数据更新服务的参数
+        addDataUpdateTaskField(dataUpdateTask);
+
         // 结束网关 ===> 数据更新服务  sequenceFlow
         SequenceFlow endGatewaySequenceFlow = new SequenceFlow(endParallelGatewayId, dataUpdateTask.getId());
         process.addFlowElement(endGatewaySequenceFlow);
@@ -132,6 +140,53 @@ public class DynamicApproveProcessHelper {
         BpmnXMLConverter bpmnXMLConverter = new BpmnXMLConverter();
         byte[] convertToXML = bpmnXMLConverter.convertToXML(bpmnModel);
         return new String(convertToXML);
+    }
+
+
+    private static void bindRegionAssignListener(
+        UserTask userTask,
+        String regionCode,
+        DynamicApproveLevel approveLevel){
+        FlowableListener regionAssignListener = new FlowableListener();
+        regionAssignListener.setEvent("create");
+        regionAssignListener.setImplementationType("class");
+        regionAssignListener.setImplementation("org.example.listener.RegionAssignTaskListener");
+        //
+        FieldExtension urlField = new FieldExtension();
+        urlField.setFieldName("urlField");
+        urlField.setStringValue("http://localhost:9090/api/v1/hello-world/query-region-assign");
+        //
+        FieldExtension parametersField = new FieldExtension();
+        parametersField.setFieldName("parametersField");
+        parametersField.setStringValue("regionCode=" + regionCode + "&approveLevel=" +approveLevel.getCode());
+        //
+        regionAssignListener.setFieldExtensions(
+            List.of(urlField, parametersField)
+        );
+        userTask.setTaskListeners(
+            List.of(regionAssignListener)
+        );
+    }
+
+    private static void addDataUpdateTaskField(
+        ServiceTask serviceTask){
+        // url 字段
+        FieldExtension urlField = new FieldExtension();
+        urlField.setFieldName("urlField");
+        urlField.setStringValue("http://localhost:9090/api/v1/hello-world/update-data");
+        // parametersField 字段
+        FieldExtension parametersField = new FieldExtension();
+        parametersField.setFieldName("parametersField");
+        parametersField.setStringValue(ProcessVariables.STATUS + "=COMPLETE");
+        // expressionField 字段
+        FieldExtension expressionField = new FieldExtension();
+        expressionField.setFieldName("expressionField");
+        expressionField.setStringValue("auditResult");
+
+        serviceTask.setFieldExtensions(
+            List.of(urlField, parametersField, expressionField)
+        );
+
     }
 
 

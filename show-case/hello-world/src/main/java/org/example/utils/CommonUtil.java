@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import cn.hutool.http.HttpUtil;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -11,6 +12,14 @@ public class CommonUtil {
     public static String uuid(){
 
         return UUIDHelper.randomUUID() ;
+    }
+
+    public static String getParameter(String parameters, String fieldName){
+        Map<String, List<String>> params = HttpUtil.decodeParams(parameters, "UTF-8");
+        return Optional.ofNullable(params.get(fieldName))
+            .filter(item -> !CollectionUtils.isEmpty(item))
+            .map(list -> list.get(0))
+            .orElse(null);
     }
 
     /**
