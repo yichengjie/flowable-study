@@ -19,3 +19,8 @@ mybatis-plus:
 remote:
   library:
     url: http://localhost:8081
+
+logging:
+  level:
+    root: info
+    org.flowable.engine: debug
