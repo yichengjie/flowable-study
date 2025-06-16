@@ -18,6 +18,7 @@
         <module>show-case</module>
         <module>library-service</module>
         <module>modules</module>
+        <module>show-case/hello-web</module>
     </modules>
 
     <properties>

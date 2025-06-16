@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket</title>
+</head>
+<body>
+<h1>WebSocket Test</h1>
+
+<!-- 输入框和按钮 -->
+<input type="text" id="sendTxt" placeholder="请输入消息">
+<button id="sendBtn">发送消息</button>
+
+<div id="recv">等待连接...</div>
+
+<script type="text/javascript">
+    // 创建 WebSocket 连接
+    var websocket = new WebSocket("ws://localhost:8766/test/ws");
+
+    // 监听 WebSocket 打开事件
+    websocket.onopen = function(event) {
+        console.log("WebSocket 连接已打开"+ event);
+        document.getElementById("recv").innerHTML = "连接成功！";
+    };
+
+    // 监听 WebSocket 消息事件
+    websocket.onmessage = function(event) {
+        console.log("收到消息: " + event.data);
+        // 在页面上显示接收到的消息
+        document.getElementById("recv").innerHTML = event.data;
+    };
+
+    // 监听 WebSocket 关闭事件
+    websocket.onclose = function(event) {
+        console.log("WebSocket 连接已关闭"+ event);
+        document.getElementById("recv").innerHTML = "连接已关闭";
+    };
+
+    // 监听 WebSocket 错误事件
+    websocket.onerror = function(error) {
+        console.log("WebSocket 错误: " + error);
+        document.getElementById("recv").innerHTML = "发生错误！";
+    };
+
+    // 当点击发送按钮时，发送消息到服务器
+    document.getElementById("sendBtn").onclick = function() {
+        var message = document.getElementById("sendTxt").value;
+        if (message) {
+            websocket.send(message); // 发送输入框里的消息
+            console.log("发送消息: " + message);
+        } else {
+            alert("请输入消息！");
+        }
+    };
+</script>
+</body>
+</html>
